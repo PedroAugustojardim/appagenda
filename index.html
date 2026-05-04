@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <meta name="theme-color" content="#6366f1" />
+  <meta name="theme-color" content="#000000" />
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
@@ -15,7 +15,6 @@
 </head>
 <body>
   <div id="app">
-    <!-- Header -->
     <header class="header">
       <div class="header-left">
         <span class="logo">G</span>
@@ -28,16 +27,15 @@
       </div>
     </header>
 
-    <!-- Date bar -->
     <div class="date-bar">
       <span id="date-label"></span>
       <span id="week-label"></span>
     </div>
 
-    <!-- Tabs -->
     <nav class="tabs">
       <button class="tab active" data-tab="daily">Hoje</button>
       <button class="tab" data-tab="weekly">Semana</button>
+      <button class="tab" data-tab="monthly">Mês</button>
     </nav>
 
     <!-- Daily Panel -->
@@ -49,16 +47,9 @@
       <div class="progress-bar-wrap">
         <div id="daily-bar" class="progress-bar"></div>
       </div>
-
-      <div class="add-form">
-        <input id="daily-input" type="text" placeholder="Nova tarefa para hoje..." maxlength="120" />
-        <button id="daily-add" class="add-btn">+</button>
-      </div>
-
       <ul id="daily-list" class="task-list"></ul>
-
       <div id="daily-empty" class="empty-state hidden">
-        <p>Nenhuma tarefa por hoje.<br/>Adicione uma acima!</p>
+        <p>Nenhuma tarefa por hoje.<br/>Toque no + para adicionar!</p>
       </div>
     </section>
 
@@ -71,18 +62,42 @@
       <div class="progress-bar-wrap">
         <div id="weekly-bar" class="progress-bar"></div>
       </div>
-
-      <div class="add-form">
-        <input id="weekly-input" type="text" placeholder="Nova meta semanal..." maxlength="120" />
-        <button id="weekly-add" class="add-btn">+</button>
-      </div>
-
       <ul id="weekly-list" class="task-list"></ul>
-
       <div id="weekly-empty" class="empty-state hidden">
-        <p>Nenhuma meta esta semana.<br/>Adicione uma acima!</p>
+        <p>Nenhuma meta esta semana.<br/>Toque no + para adicionar!</p>
       </div>
     </section>
+
+    <!-- Monthly Panel -->
+    <section id="panel-monthly" class="panel hidden">
+      <div class="panel-header">
+        <h2>Metas do Mês</h2>
+        <span id="monthly-progress" class="progress-label"></span>
+      </div>
+      <div class="progress-bar-wrap">
+        <div id="monthly-bar" class="progress-bar"></div>
+      </div>
+      <ul id="monthly-list" class="task-list"></ul>
+      <div id="monthly-empty" class="empty-state hidden">
+        <p>Nenhuma meta este mês.<br/>Toque no + para adicionar!</p>
+      </div>
+    </section>
+  </div>
+
+  <!-- FAB -->
+  <button id="fab" class="fab" aria-label="Adicionar tarefa">+</button>
+
+  <!-- Bottom Sheet -->
+  <div id="sheet-overlay" class="sheet-overlay hidden">
+    <div id="add-sheet" class="add-sheet">
+      <div class="sheet-handle"></div>
+      <p id="sheet-title" class="sheet-title">Nova tarefa do dia</p>
+      <div class="sheet-form">
+        <input id="sheet-input" type="text" maxlength="120" placeholder="Escreva aqui..." />
+        <button id="sheet-confirm" class="sheet-btn">Adicionar</button>
+      </div>
+      <button id="sheet-cancel" class="sheet-cancel">Cancelar</button>
+    </div>
   </div>
 
   <!-- Confirm delete modal -->

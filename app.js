@@ -20,6 +20,11 @@ function weekKey() {
   return `week-${mon.getFullYear()}-${mon.getMonth()}-${mon.getDate()}`;
 }
 
+function monthKey() {
+  const d = new Date();
+  return `month-${d.getFullYear()}-${d.getMonth()}`;
+}
+
 function formatDate(d) {
   return d.toLocaleDateString('pt-BR', { weekday: 'long', day: 'numeric', month: 'long' });
 }
@@ -36,14 +41,17 @@ function formatWeekRange() {
 // ── Data ─────────────────────────────────────────────────────────
 let dailyTasks = [];
 let weeklyTasks = [];
+let monthlyTasks = [];
 
 function loadData() {
-  dailyTasks = store.get(todayKey()) || [];
-  weeklyTasks = store.get(weekKey()) || [];
+  dailyTasks   = store.get(todayKey()) || [];
+  weeklyTasks  = store.get(weekKey())  || [];
+  monthlyTasks = store.get(monthKey()) || [];
 }
 
-function saveDaily() { store.set(todayKey(), dailyTasks); }
-function saveWeekly() { store.set(weekKey(), weeklyTasks); }
+function saveDaily()   { store.set(todayKey(), dailyTasks); }
+function saveWeekly()  { store.set(weekKey(),  weeklyTasks); }
+function saveMonthly() { store.set(monthKey(), monthlyTasks); }
 
 function addTask(list, text) {
   list.push({ id: Date.now(), text: text.trim(), done: false });
@@ -53,7 +61,7 @@ function addTask(list, text) {
 function renderList(tasks, ulEl, emptyEl, barEl, labelEl, onToggle, onDelete) {
   ulEl.innerHTML = '';
   const done = tasks.filter(t => t.done).length;
-  const pct = tasks.length ? Math.round((done / tasks.length) * 100) : 0;
+  const pct  = tasks.length ? Math.round((done / tasks.length) * 100) : 0;
   barEl.style.width = pct + '%';
   labelEl.textContent = tasks.length ? `${done}/${tasks.length}` : '';
 
@@ -86,27 +94,30 @@ function renderList(tasks, ulEl, emptyEl, barEl, labelEl, onToggle, onDelete) {
 }
 
 function renderDaily() {
-  renderList(
-    dailyTasks,
+  renderList(dailyTasks,
     document.getElementById('daily-list'),
     document.getElementById('daily-empty'),
     document.getElementById('daily-bar'),
     document.getElementById('daily-progress'),
-    toggleDaily,
-    deleteDaily
-  );
+    toggleDaily, deleteDaily);
 }
 
 function renderWeekly() {
-  renderList(
-    weeklyTasks,
+  renderList(weeklyTasks,
     document.getElementById('weekly-list'),
     document.getElementById('weekly-empty'),
     document.getElementById('weekly-bar'),
     document.getElementById('weekly-progress'),
-    toggleWeekly,
-    deleteWeekly
-  );
+    toggleWeekly, deleteWeekly);
+}
+
+function renderMonthly() {
+  renderList(monthlyTasks,
+    document.getElementById('monthly-list'),
+    document.getElementById('monthly-empty'),
+    document.getElementById('monthly-bar'),
+    document.getElementById('monthly-progress'),
+    toggleMonthly, deleteMonthly);
 }
 
 // ── Actions ──────────────────────────────────────────────────────
@@ -118,20 +129,28 @@ function toggleWeekly(id) {
   const t = weeklyTasks.find(t => t.id === id);
   if (t) { t.done = !t.done; saveWeekly(); renderWeekly(); }
 }
+function toggleMonthly(id) {
+  const t = monthlyTasks.find(t => t.id === id);
+  if (t) { t.done = !t.done; saveMonthly(); renderMonthly(); }
+}
 
-let pendingDeleteId = null;
+let pendingDeleteId   = null;
 let pendingDeleteType = null;
 
-function deleteDaily(id) { pendingDeleteId = id; pendingDeleteType = 'daily'; showModal(); }
-function deleteWeekly(id) { pendingDeleteId = id; pendingDeleteType = 'weekly'; showModal(); }
+function deleteDaily(id)   { pendingDeleteId = id; pendingDeleteType = 'daily';   showModal(); }
+function deleteWeekly(id)  { pendingDeleteId = id; pendingDeleteType = 'weekly';  showModal(); }
+function deleteMonthly(id) { pendingDeleteId = id; pendingDeleteType = 'monthly'; showModal(); }
 
 function confirmDelete() {
   if (pendingDeleteType === 'daily') {
     dailyTasks = dailyTasks.filter(t => t.id !== pendingDeleteId);
     saveDaily(); renderDaily();
-  } else {
+  } else if (pendingDeleteType === 'weekly') {
     weeklyTasks = weeklyTasks.filter(t => t.id !== pendingDeleteId);
     saveWeekly(); renderWeekly();
+  } else {
+    monthlyTasks = monthlyTasks.filter(t => t.id !== pendingDeleteId);
+    saveMonthly(); renderMonthly();
   }
   hideModal();
 }
@@ -139,8 +158,55 @@ function confirmDelete() {
 function showModal() { document.getElementById('modal-overlay').classList.remove('hidden'); }
 function hideModal() {
   document.getElementById('modal-overlay').classList.add('hidden');
-  pendingDeleteId = null;
-  pendingDeleteType = null;
+  pendingDeleteId = null; pendingDeleteType = null;
+}
+
+// ── Bottom Sheet ─────────────────────────────────────────────────
+const SHEET_TITLES = {
+  daily:   'Nova tarefa do dia',
+  weekly:  'Nova meta semanal',
+  monthly: 'Nova meta do mês',
+};
+
+function openSheet() {
+  const overlay = document.getElementById('sheet-overlay');
+  const input   = document.getElementById('sheet-input');
+  document.getElementById('sheet-title').textContent = SHEET_TITLES[currentTab];
+  overlay.classList.remove('hidden');
+  setTimeout(() => input.focus(), 80);
+}
+
+function closeSheet() {
+  document.getElementById('sheet-overlay').classList.add('hidden');
+  document.getElementById('sheet-input').value = '';
+}
+
+function confirmSheet() {
+  const input = document.getElementById('sheet-input');
+  const text  = input.value.trim();
+  if (!text) return;
+  if (currentTab === 'daily') {
+    addTask(dailyTasks, text); saveDaily(); renderDaily();
+  } else if (currentTab === 'weekly') {
+    addTask(weeklyTasks, text); saveWeekly(); renderWeekly();
+  } else {
+    addTask(monthlyTasks, text); saveMonthly(); renderMonthly();
+  }
+  closeSheet();
+}
+
+// ── Tabs ─────────────────────────────────────────────────────────
+let currentTab = 'daily';
+
+function switchTab(name) {
+  currentTab = name;
+  document.querySelectorAll('.tab').forEach(t =>
+    t.classList.toggle('active', t.dataset.tab === name));
+  ['daily', 'weekly', 'monthly'].forEach(p => {
+    const el = document.getElementById(`panel-${p}`);
+    el.classList.toggle('active', p === name);
+    el.classList.toggle('hidden', p !== name);
+  });
 }
 
 // ── Notifications ────────────────────────────────────────────────
@@ -154,28 +220,17 @@ function updateNotifBtn() {
 
 async function toggleNotifications() {
   if (!('Notification' in window)) {
-    alert('Seu navegador não suporta notificações.');
-    return;
+    alert('Seu navegador não suporta notificações.'); return;
   }
-
   if (notifEnabled) {
-    notifEnabled = false;
-    store.set('notif-enabled', false);
-    updateNotifBtn();
-    return;
+    notifEnabled = false; store.set('notif-enabled', false); updateNotifBtn(); return;
   }
-
   const perm = await Notification.requestPermission();
   if (perm !== 'granted') {
-    alert('Permissão para notificações negada. Ative nas configurações do navegador.');
-    return;
+    alert('Permissão para notificações negada. Ative nas configurações do navegador.'); return;
   }
-
-  notifEnabled = true;
-  store.set('notif-enabled', true);
-  updateNotifBtn();
-  scheduleReminders();
-
+  notifEnabled = true; store.set('notif-enabled', true);
+  updateNotifBtn(); scheduleReminders();
   new Notification('Ghestror ativado!', {
     body: 'Você receberá lembretes das suas tarefas.',
     icon: '/icons/icon.svg'
@@ -183,29 +238,20 @@ async function toggleNotifications() {
 }
 
 function scheduleReminders() {
-  if (!notifEnabled) return;
-  if (Notification.permission !== 'granted') return;
-
-  // Morning reminder at 8:00
+  if (!notifEnabled || Notification.permission !== 'granted') return;
   scheduleAt(8, 0, () => {
     const pending = dailyTasks.filter(t => !t.done).length;
-    if (pending > 0) {
-      new Notification('Bom dia! Ghestror', {
-        body: `Você tem ${pending} tarefa${pending > 1 ? 's' : ''} para hoje.`,
-        icon: '/icons/icon.svg'
-      });
-    }
+    if (pending > 0) new Notification('Bom dia! Ghestror', {
+      body: `Você tem ${pending} tarefa${pending > 1 ? 's' : ''} para hoje.`,
+      icon: '/icons/icon.svg'
+    });
   });
-
-  // Evening reminder at 19:00
   scheduleAt(19, 0, () => {
     const pending = dailyTasks.filter(t => !t.done).length;
-    if (pending > 0) {
-      new Notification('Lembrete noturno — Ghestror', {
-        body: `Ainda há ${pending} tarefa${pending > 1 ? 's' : ''} pendente${pending > 1 ? 's' : ''} hoje.`,
-        icon: '/icons/icon.svg'
-      });
-    }
+    if (pending > 0) new Notification('Lembrete noturno — Ghestror', {
+      body: `Ainda há ${pending} tarefa${pending > 1 ? 's' : ''} pendente${pending > 1 ? 's' : ''} hoje.`,
+      icon: '/icons/icon.svg'
+    });
   });
 }
 
@@ -214,24 +260,12 @@ function scheduleAt(hour, minute, fn) {
   const target = new Date();
   target.setHours(hour, minute, 0, 0);
   if (target <= now) target.setDate(target.getDate() + 1);
-  const ms = target - now;
-  setTimeout(() => { fn(); setInterval(fn, 24 * 60 * 60 * 1000); }, ms);
-}
-
-// ── Tabs ─────────────────────────────────────────────────────────
-function switchTab(name) {
-  document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.tab === name));
-  document.getElementById('panel-daily').classList.toggle('active', name === 'daily');
-  document.getElementById('panel-daily').classList.toggle('hidden', name !== 'daily');
-  document.getElementById('panel-weekly').classList.toggle('active', name === 'weekly');
-  document.getElementById('panel-weekly').classList.toggle('hidden', name !== 'weekly');
+  setTimeout(() => { fn(); setInterval(fn, 24 * 60 * 60 * 1000); }, target - now);
 }
 
 // ── Service Worker ───────────────────────────────────────────────
 function registerSW() {
-  if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('/sw.js').catch(() => {});
-  }
+  if ('serviceWorker' in navigator) navigator.serviceWorker.register('/sw.js').catch(() => {});
 }
 
 // ── Init ─────────────────────────────────────────────────────────
@@ -239,50 +273,30 @@ document.addEventListener('DOMContentLoaded', () => {
   loadData();
   registerSW();
 
-  // Date labels
   const now = new Date();
   document.getElementById('date-label').textContent = formatDate(now);
-  document.getElementById('week-label').textContent = formatWeekRange();
+  document.getElementById('week-label').textContent  = formatWeekRange();
 
-  renderDaily();
-  renderWeekly();
+  renderDaily(); renderWeekly(); renderMonthly();
   updateNotifBtn();
-
   if (notifEnabled) scheduleReminders();
 
-  // Tab buttons
-  document.querySelectorAll('.tab').forEach(btn => {
-    btn.addEventListener('click', () => switchTab(btn.dataset.tab));
-  });
+  // Tabs
+  document.querySelectorAll('.tab').forEach(btn =>
+    btn.addEventListener('click', () => switchTab(btn.dataset.tab)));
 
-  // Add daily
-  const dailyInput = document.getElementById('daily-input');
-  document.getElementById('daily-add').addEventListener('click', () => {
-    const text = dailyInput.value.trim();
-    if (!text) return;
-    addTask(dailyTasks, text);
-    saveDaily();
-    renderDaily();
-    dailyInput.value = '';
-    dailyInput.focus();
-  });
-  dailyInput.addEventListener('keydown', e => {
-    if (e.key === 'Enter') document.getElementById('daily-add').click();
-  });
+  // FAB
+  document.getElementById('fab').addEventListener('click', openSheet);
 
-  // Add weekly
-  const weeklyInput = document.getElementById('weekly-input');
-  document.getElementById('weekly-add').addEventListener('click', () => {
-    const text = weeklyInput.value.trim();
-    if (!text) return;
-    addTask(weeklyTasks, text);
-    saveWeekly();
-    renderWeekly();
-    weeklyInput.value = '';
-    weeklyInput.focus();
+  // Sheet
+  document.getElementById('sheet-confirm').addEventListener('click', confirmSheet);
+  document.getElementById('sheet-cancel').addEventListener('click', closeSheet);
+  document.getElementById('sheet-input').addEventListener('keydown', e => {
+    if (e.key === 'Enter') confirmSheet();
+    if (e.key === 'Escape') closeSheet();
   });
-  weeklyInput.addEventListener('keydown', e => {
-    if (e.key === 'Enter') document.getElementById('weekly-add').click();
+  document.getElementById('sheet-overlay').addEventListener('click', e => {
+    if (e.target === e.currentTarget) closeSheet();
   });
 
   // Notifications
