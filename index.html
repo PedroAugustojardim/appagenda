@@ -41,18 +41,17 @@
     <section id="panel-daily" class="panel active">
       <div class="panel-header">
         <h2>Tarefas do Dia</h2>
-        <span id="daily-progress" class="progress-label"></span>
+        <div class="panel-header-right">
+          <span id="daily-progress" class="progress-label"></span>
+          <button class="add-panel-btn" data-panel="daily" aria-label="Adicionar tarefa">+</button>
+        </div>
       </div>
       <div class="progress-bar-wrap">
         <div id="daily-bar" class="progress-bar"></div>
       </div>
-      <div class="add-form">
-        <input id="daily-input" type="text" placeholder="Nova tarefa para hoje..." maxlength="120" />
-        <button id="daily-add" class="add-btn">+</button>
-      </div>
       <ul id="daily-list" class="task-list"></ul>
       <div id="daily-empty" class="empty-state hidden">
-        <p>Nenhuma tarefa por hoje.<br/>Adicione uma acima!</p>
+        <p>Nenhuma tarefa por hoje.<br/>Toque no + para adicionar!</p>
       </div>
     </section>
 
@@ -60,20 +59,32 @@
     <section id="panel-weekly" class="panel hidden">
       <div class="panel-header">
         <h2>Metas da Semana</h2>
-        <span id="weekly-progress" class="progress-label"></span>
+        <div class="panel-header-right">
+          <span id="weekly-progress" class="progress-label"></span>
+          <button class="add-panel-btn" data-panel="weekly" aria-label="Adicionar meta">+</button>
+        </div>
       </div>
       <div class="progress-bar-wrap">
         <div id="weekly-bar" class="progress-bar"></div>
       </div>
-      <div class="add-form">
-        <input id="weekly-input" type="text" placeholder="Nova meta semanal..." maxlength="120" />
-        <button id="weekly-add" class="add-btn">+</button>
-      </div>
       <ul id="weekly-list" class="task-list"></ul>
       <div id="weekly-empty" class="empty-state hidden">
-        <p>Nenhuma meta esta semana.<br/>Adicione uma acima!</p>
+        <p>Nenhuma meta esta semana.<br/>Toque no + para adicionar!</p>
       </div>
     </section>
+  </div>
+
+  <!-- Floating add sheet -->
+  <div id="sheet-overlay" class="sheet-overlay hidden">
+    <div id="add-sheet" class="add-sheet">
+      <div class="sheet-handle"></div>
+      <p id="sheet-title" class="sheet-title">Nova tarefa</p>
+      <div class="sheet-form">
+        <input id="sheet-input" type="text" maxlength="120" placeholder="Escreva aqui..." autocomplete="off" />
+        <button id="sheet-confirm" class="sheet-btn">Adicionar</button>
+      </div>
+      <button id="sheet-cancel" class="sheet-cancel">Cancelar</button>
+    </div>
   </div>
 
   <!-- Confirm delete modal -->

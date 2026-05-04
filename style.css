@@ -8,7 +8,6 @@
   --border: #2e2e2e;
   --primary: #ffffff;
   --primary-dim: #cccccc;
-  --success: #ffffff;
   --danger: #ff4444;
   --text: #ffffff;
   --text-muted: #666666;
@@ -130,7 +129,35 @@ html, body {
   margin-bottom: 8px;
 }
 .panel-header h2 { font-size: 17px; font-weight: 700; }
+
+.panel-header-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
 .progress-label { font-size: 12px; color: var(--text-muted); }
+
+/* + button inside panel header */
+.add-panel-btn {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: var(--primary);
+  border: none;
+  color: #000;
+  font-size: 22px;
+  font-weight: 400;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: background 0.2s, transform 0.15s;
+}
+.add-panel-btn:hover { background: var(--primary-dim); }
+.add-panel-btn:active { transform: scale(0.9); }
 
 /* Progress bar */
 .progress-bar-wrap {
@@ -147,46 +174,6 @@ html, body {
   transition: width 0.4s ease;
   width: 0%;
 }
-
-/* Add form */
-.add-form {
-  display: flex;
-  gap: 8px;
-  margin-bottom: 16px;
-}
-
-.add-form input {
-  flex: 1;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  color: var(--text);
-  font-size: 15px;
-  padding: 11px 14px;
-  outline: none;
-  transition: border-color 0.2s;
-}
-.add-form input:focus { border-color: var(--primary); }
-.add-form input::placeholder { color: var(--text-muted); }
-
-.add-btn {
-  width: 44px;
-  height: 44px;
-  border-radius: var(--radius-sm);
-  background: var(--primary);
-  border: none;
-  color: #000;
-  font-size: 24px;
-  font-weight: 300;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  transition: background 0.2s;
-}
-.add-btn:hover { background: var(--primary-dim); }
-.add-btn:active { transform: scale(0.95); }
 
 /* Task list */
 .task-list {
@@ -284,6 +271,99 @@ html, body {
   line-height: 1.7;
 }
 .empty-state.hidden { display: none; }
+
+/* Floating bottom sheet */
+.sheet-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  z-index: 50;
+  backdrop-filter: blur(2px);
+}
+.sheet-overlay.hidden { display: none; }
+
+.add-sheet {
+  width: 100%;
+  max-width: 480px;
+  background: var(--surface2);
+  border-radius: 20px 20px 0 0;
+  border-top: 1px solid var(--border);
+  padding: 12px 20px calc(20px + env(safe-area-inset-bottom));
+  animation: slideUp 0.22s cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+@keyframes slideUp {
+  from { transform: translateY(100%); }
+  to   { transform: translateY(0); }
+}
+
+.sheet-handle {
+  width: 36px;
+  height: 4px;
+  background: var(--border);
+  border-radius: 99px;
+  margin: 0 auto 16px;
+}
+
+.sheet-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  margin-bottom: 12px;
+}
+
+.sheet-form {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.sheet-form input {
+  flex: 1;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text);
+  font-size: 16px;
+  padding: 12px 14px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+.sheet-form input:focus { border-color: var(--primary); }
+.sheet-form input::placeholder { color: var(--text-muted); }
+
+.sheet-btn {
+  padding: 12px 18px;
+  border-radius: var(--radius-sm);
+  background: var(--primary);
+  border: none;
+  color: #000;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.2s;
+}
+.sheet-btn:hover { background: var(--primary-dim); }
+
+.sheet-cancel {
+  display: block;
+  width: 100%;
+  padding: 10px;
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text-muted);
+  font-size: 15px;
+  cursor: pointer;
+  transition: color 0.2s, border-color 0.2s;
+}
+.sheet-cancel:hover { color: var(--text); border-color: var(--primary); }
 
 /* Modal */
 .modal-overlay {

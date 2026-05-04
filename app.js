@@ -136,6 +136,38 @@ function hideModal() {
   pendingDeleteId = null; pendingDeleteType = null;
 }
 
+// ── Floating sheet ────────────────────────────────────────────────
+let sheetTarget = 'daily';
+
+const SHEET_TITLES = {
+  daily:  'Nova tarefa do dia',
+  weekly: 'Nova meta semanal',
+};
+
+function openSheet(panel) {
+  sheetTarget = panel;
+  document.getElementById('sheet-title').textContent = SHEET_TITLES[panel];
+  document.getElementById('sheet-overlay').classList.remove('hidden');
+  setTimeout(() => document.getElementById('sheet-input').focus(), 80);
+}
+
+function closeSheet() {
+  document.getElementById('sheet-overlay').classList.add('hidden');
+  document.getElementById('sheet-input').value = '';
+}
+
+function confirmSheet() {
+  const input = document.getElementById('sheet-input');
+  const text  = input.value.trim();
+  if (!text) return;
+  if (sheetTarget === 'daily') {
+    addTask(dailyTasks, text); saveDaily(); renderDaily();
+  } else {
+    addTask(weeklyTasks, text); saveWeekly(); renderWeekly();
+  }
+  closeSheet();
+}
+
 // ── Tabs ─────────────────────────────────────────────────────────
 function switchTab(name) {
   document.querySelectorAll('.tab').forEach(t =>
@@ -165,7 +197,7 @@ async function toggleNotifications() {
   }
   const perm = await Notification.requestPermission();
   if (perm !== 'granted') {
-    alert('Permissão para notificações negada. Ative nas configurações do navegador.'); return;
+    alert('Permissão negada. Ative nas configurações do navegador.'); return;
   }
   notifEnabled = true; store.set('notif-enabled', true);
   updateNotifBtn(); scheduleReminders();
@@ -178,16 +210,16 @@ async function toggleNotifications() {
 function scheduleReminders() {
   if (!notifEnabled || Notification.permission !== 'granted') return;
   scheduleAt(8, 0, () => {
-    const pending = dailyTasks.filter(t => !t.done).length;
-    if (pending > 0) new Notification('Bom dia! Ghestror', {
-      body: `Você tem ${pending} tarefa${pending > 1 ? 's' : ''} para hoje.`,
+    const p = dailyTasks.filter(t => !t.done).length;
+    if (p > 0) new Notification('Bom dia! Ghestror', {
+      body: `Você tem ${p} tarefa${p > 1 ? 's' : ''} para hoje.`,
       icon: '/icons/icon.svg'
     });
   });
   scheduleAt(19, 0, () => {
-    const pending = dailyTasks.filter(t => !t.done).length;
-    if (pending > 0) new Notification('Lembrete noturno — Ghestror', {
-      body: `Ainda há ${pending} tarefa${pending > 1 ? 's' : ''} pendente${pending > 1 ? 's' : ''} hoje.`,
+    const p = dailyTasks.filter(t => !t.done).length;
+    if (p > 0) new Notification('Lembrete noturno — Ghestror', {
+      body: `Ainda há ${p} tarefa${p > 1 ? 's' : ''} pendente${p > 1 ? 's' : ''} hoje.`,
       icon: '/icons/icon.svg'
     });
   });
@@ -223,28 +255,19 @@ document.addEventListener('DOMContentLoaded', () => {
   document.querySelectorAll('.tab').forEach(btn =>
     btn.addEventListener('click', () => switchTab(btn.dataset.tab)));
 
-  // Add daily
-  const dailyInput = document.getElementById('daily-input');
-  document.getElementById('daily-add').addEventListener('click', () => {
-    const text = dailyInput.value.trim();
-    if (!text) return;
-    addTask(dailyTasks, text); saveDaily(); renderDaily();
-    dailyInput.value = ''; dailyInput.focus();
-  });
-  dailyInput.addEventListener('keydown', e => {
-    if (e.key === 'Enter') document.getElementById('daily-add').click();
-  });
+  // + buttons in panel headers
+  document.querySelectorAll('.add-panel-btn').forEach(btn =>
+    btn.addEventListener('click', () => openSheet(btn.dataset.panel)));
 
-  // Add weekly
-  const weeklyInput = document.getElementById('weekly-input');
-  document.getElementById('weekly-add').addEventListener('click', () => {
-    const text = weeklyInput.value.trim();
-    if (!text) return;
-    addTask(weeklyTasks, text); saveWeekly(); renderWeekly();
-    weeklyInput.value = ''; weeklyInput.focus();
+  // Sheet
+  document.getElementById('sheet-confirm').addEventListener('click', confirmSheet);
+  document.getElementById('sheet-cancel').addEventListener('click', closeSheet);
+  document.getElementById('sheet-input').addEventListener('keydown', e => {
+    if (e.key === 'Enter') confirmSheet();
+    if (e.key === 'Escape') closeSheet();
   });
-  weeklyInput.addEventListener('keydown', e => {
-    if (e.key === 'Enter') document.getElementById('weekly-add').click();
+  document.getElementById('sheet-overlay').addEventListener('click', e => {
+    if (e.target === e.currentTarget) closeSheet();
   });
 
   // Notifications
