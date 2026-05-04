@@ -20,11 +20,6 @@ function weekKey() {
   return `week-${mon.getFullYear()}-${mon.getMonth()}-${mon.getDate()}`;
 }
 
-function monthKey() {
-  const d = new Date();
-  return `month-${d.getFullYear()}-${d.getMonth()}`;
-}
-
 function formatDate(d) {
   return d.toLocaleDateString('pt-BR', { weekday: 'long', day: 'numeric', month: 'long' });
 }
@@ -39,19 +34,16 @@ function formatWeekRange() {
 }
 
 // ── Data ─────────────────────────────────────────────────────────
-let dailyTasks = [];
+let dailyTasks  = [];
 let weeklyTasks = [];
-let monthlyTasks = [];
 
 function loadData() {
-  dailyTasks   = store.get(todayKey()) || [];
-  weeklyTasks  = store.get(weekKey())  || [];
-  monthlyTasks = store.get(monthKey()) || [];
+  dailyTasks  = store.get(todayKey()) || [];
+  weeklyTasks = store.get(weekKey())  || [];
 }
 
-function saveDaily()   { store.set(todayKey(), dailyTasks); }
-function saveWeekly()  { store.set(weekKey(),  weeklyTasks); }
-function saveMonthly() { store.set(monthKey(), monthlyTasks); }
+function saveDaily()  { store.set(todayKey(), dailyTasks); }
+function saveWeekly() { store.set(weekKey(),  weeklyTasks); }
 
 function addTask(list, text) {
   list.push({ id: Date.now(), text: text.trim(), done: false });
@@ -111,15 +103,6 @@ function renderWeekly() {
     toggleWeekly, deleteWeekly);
 }
 
-function renderMonthly() {
-  renderList(monthlyTasks,
-    document.getElementById('monthly-list'),
-    document.getElementById('monthly-empty'),
-    document.getElementById('monthly-bar'),
-    document.getElementById('monthly-progress'),
-    toggleMonthly, deleteMonthly);
-}
-
 // ── Actions ──────────────────────────────────────────────────────
 function toggleDaily(id) {
   const t = dailyTasks.find(t => t.id === id);
@@ -129,28 +112,20 @@ function toggleWeekly(id) {
   const t = weeklyTasks.find(t => t.id === id);
   if (t) { t.done = !t.done; saveWeekly(); renderWeekly(); }
 }
-function toggleMonthly(id) {
-  const t = monthlyTasks.find(t => t.id === id);
-  if (t) { t.done = !t.done; saveMonthly(); renderMonthly(); }
-}
 
 let pendingDeleteId   = null;
 let pendingDeleteType = null;
 
-function deleteDaily(id)   { pendingDeleteId = id; pendingDeleteType = 'daily';   showModal(); }
-function deleteWeekly(id)  { pendingDeleteId = id; pendingDeleteType = 'weekly';  showModal(); }
-function deleteMonthly(id) { pendingDeleteId = id; pendingDeleteType = 'monthly'; showModal(); }
+function deleteDaily(id)  { pendingDeleteId = id; pendingDeleteType = 'daily';  showModal(); }
+function deleteWeekly(id) { pendingDeleteId = id; pendingDeleteType = 'weekly'; showModal(); }
 
 function confirmDelete() {
   if (pendingDeleteType === 'daily') {
     dailyTasks = dailyTasks.filter(t => t.id !== pendingDeleteId);
     saveDaily(); renderDaily();
-  } else if (pendingDeleteType === 'weekly') {
+  } else {
     weeklyTasks = weeklyTasks.filter(t => t.id !== pendingDeleteId);
     saveWeekly(); renderWeekly();
-  } else {
-    monthlyTasks = monthlyTasks.filter(t => t.id !== pendingDeleteId);
-    saveMonthly(); renderMonthly();
   }
   hideModal();
 }
@@ -161,48 +136,11 @@ function hideModal() {
   pendingDeleteId = null; pendingDeleteType = null;
 }
 
-// ── Bottom Sheet ─────────────────────────────────────────────────
-const SHEET_TITLES = {
-  daily:   'Nova tarefa do dia',
-  weekly:  'Nova meta semanal',
-  monthly: 'Nova meta do mês',
-};
-
-function openSheet() {
-  const overlay = document.getElementById('sheet-overlay');
-  const input   = document.getElementById('sheet-input');
-  document.getElementById('sheet-title').textContent = SHEET_TITLES[currentTab];
-  overlay.classList.remove('hidden');
-  setTimeout(() => input.focus(), 80);
-}
-
-function closeSheet() {
-  document.getElementById('sheet-overlay').classList.add('hidden');
-  document.getElementById('sheet-input').value = '';
-}
-
-function confirmSheet() {
-  const input = document.getElementById('sheet-input');
-  const text  = input.value.trim();
-  if (!text) return;
-  if (currentTab === 'daily') {
-    addTask(dailyTasks, text); saveDaily(); renderDaily();
-  } else if (currentTab === 'weekly') {
-    addTask(weeklyTasks, text); saveWeekly(); renderWeekly();
-  } else {
-    addTask(monthlyTasks, text); saveMonthly(); renderMonthly();
-  }
-  closeSheet();
-}
-
 // ── Tabs ─────────────────────────────────────────────────────────
-let currentTab = 'daily';
-
 function switchTab(name) {
-  currentTab = name;
   document.querySelectorAll('.tab').forEach(t =>
     t.classList.toggle('active', t.dataset.tab === name));
-  ['daily', 'weekly', 'monthly'].forEach(p => {
+  ['daily', 'weekly'].forEach(p => {
     const el = document.getElementById(`panel-${p}`);
     el.classList.toggle('active', p === name);
     el.classList.toggle('hidden', p !== name);
@@ -277,7 +215,7 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('date-label').textContent = formatDate(now);
   document.getElementById('week-label').textContent  = formatWeekRange();
 
-  renderDaily(); renderWeekly(); renderMonthly();
+  renderDaily(); renderWeekly();
   updateNotifBtn();
   if (notifEnabled) scheduleReminders();
 
@@ -285,18 +223,28 @@ document.addEventListener('DOMContentLoaded', () => {
   document.querySelectorAll('.tab').forEach(btn =>
     btn.addEventListener('click', () => switchTab(btn.dataset.tab)));
 
-  // FAB
-  document.getElementById('fab').addEventListener('click', openSheet);
-
-  // Sheet
-  document.getElementById('sheet-confirm').addEventListener('click', confirmSheet);
-  document.getElementById('sheet-cancel').addEventListener('click', closeSheet);
-  document.getElementById('sheet-input').addEventListener('keydown', e => {
-    if (e.key === 'Enter') confirmSheet();
-    if (e.key === 'Escape') closeSheet();
+  // Add daily
+  const dailyInput = document.getElementById('daily-input');
+  document.getElementById('daily-add').addEventListener('click', () => {
+    const text = dailyInput.value.trim();
+    if (!text) return;
+    addTask(dailyTasks, text); saveDaily(); renderDaily();
+    dailyInput.value = ''; dailyInput.focus();
   });
-  document.getElementById('sheet-overlay').addEventListener('click', e => {
-    if (e.target === e.currentTarget) closeSheet();
+  dailyInput.addEventListener('keydown', e => {
+    if (e.key === 'Enter') document.getElementById('daily-add').click();
+  });
+
+  // Add weekly
+  const weeklyInput = document.getElementById('weekly-input');
+  document.getElementById('weekly-add').addEventListener('click', () => {
+    const text = weeklyInput.value.trim();
+    if (!text) return;
+    addTask(weeklyTasks, text); saveWeekly(); renderWeekly();
+    weeklyInput.value = ''; weeklyInput.focus();
+  });
+  weeklyInput.addEventListener('keydown', e => {
+    if (e.key === 'Enter') document.getElementById('weekly-add').click();
   });
 
   // Notifications
