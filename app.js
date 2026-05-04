@@ -178,7 +178,7 @@ async function toggleNotifications() {
 
   new Notification('Ghestror ativado!', {
     body: 'Você receberá lembretes das suas tarefas.',
-    icon: '/icons/icon-192.png'
+    icon: '/icons/icon.svg'
   });
 }
 
@@ -192,7 +192,7 @@ function scheduleReminders() {
     if (pending > 0) {
       new Notification('Bom dia! Ghestror', {
         body: `Você tem ${pending} tarefa${pending > 1 ? 's' : ''} para hoje.`,
-        icon: '/icons/icon-192.png'
+        icon: '/icons/icon.svg'
       });
     }
   });
@@ -203,7 +203,7 @@ function scheduleReminders() {
     if (pending > 0) {
       new Notification('Lembrete noturno — Ghestror', {
         body: `Ainda há ${pending} tarefa${pending > 1 ? 's' : ''} pendente${pending > 1 ? 's' : ''} hoje.`,
-        icon: '/icons/icon-192.png'
+        icon: '/icons/icon.svg'
       });
     }
   });
