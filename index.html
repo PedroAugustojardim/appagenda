@@ -35,6 +35,7 @@
     <nav class="tabs">
       <button class="tab active" data-tab="daily">Hoje</button>
       <button class="tab" data-tab="weekly">Semana</button>
+      <button class="tab" data-tab="agenda">Agenda</button>
     </nav>
 
     <!-- Daily Panel -->
@@ -72,9 +73,28 @@
         <p>Nenhuma meta esta semana.<br/>Toque no + para adicionar!</p>
       </div>
     </section>
+
+    <!-- Agenda Panel -->
+    <section id="panel-agenda" class="panel hidden">
+      <div class="cal-nav">
+        <button id="cal-prev" class="cal-nav-btn">&#8249;</button>
+        <span id="cal-period-label" class="cal-period-label"></span>
+        <button id="cal-next" class="cal-nav-btn">&#8250;</button>
+        <button id="cal-today" class="cal-today-btn">Hoje</button>
+      </div>
+      <div class="cal-view-tabs">
+        <button class="cal-view-btn active" data-view="month">Mês</button>
+        <button class="cal-view-btn" data-view="week">Semana</button>
+        <button class="cal-view-btn" data-view="day">Dia</button>
+      </div>
+      <div id="cal-grid" class="cal-grid"></div>
+      <div class="cal-add-row">
+        <button id="cal-add-btn" class="add-panel-btn" aria-label="Novo evento">+</button>
+      </div>
+    </section>
   </div>
 
-  <!-- Floating add sheet -->
+  <!-- Task floating sheet -->
   <div id="sheet-overlay" class="sheet-overlay hidden">
     <div id="add-sheet" class="add-sheet">
       <div class="sheet-handle"></div>
@@ -84,6 +104,28 @@
         <button id="sheet-confirm" class="sheet-btn">Adicionar</button>
       </div>
       <button id="sheet-cancel" class="sheet-cancel">Cancelar</button>
+    </div>
+  </div>
+
+  <!-- Event sheet (create/edit) -->
+  <div id="event-sheet-overlay" class="sheet-overlay hidden">
+    <div class="add-sheet">
+      <div class="sheet-handle"></div>
+      <p id="event-sheet-title" class="sheet-title">Novo Evento</p>
+      <div class="event-form">
+        <input id="ev-title" type="text" placeholder="Título do evento" maxlength="80" autocomplete="off" />
+        <input id="ev-date" type="date" />
+        <div class="ev-times">
+          <input id="ev-start" type="time" />
+          <span class="ev-time-sep">→</span>
+          <input id="ev-end" type="time" />
+        </div>
+      </div>
+      <div class="sheet-actions">
+        <button id="ev-delete" class="ev-delete-btn hidden">Apagar</button>
+        <button id="ev-cancel" class="sheet-cancel" style="flex:1">Cancelar</button>
+        <button id="ev-save" class="sheet-btn" style="flex:1">Guardar</button>
+      </div>
     </div>
   </div>
 
