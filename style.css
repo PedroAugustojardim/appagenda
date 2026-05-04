@@ -185,9 +185,17 @@ html, body {
 
 .cal-grid { flex: 1; overflow: hidden; }
 .cal-add-row {
-  display: flex; justify-content: flex-end;
-  padding: 12px 0 8px;
+  display: flex; justify-content: flex-end; align-items: center;
+  gap: 8px; padding: 12px 0 8px;
 }
+.cal-export-btn {
+  display: flex; align-items: center; gap: 5px;
+  padding: 7px 12px; border-radius: var(--radius-sm);
+  background: transparent; border: 1px solid var(--border);
+  color: var(--text-muted); font-size: 13px; font-weight: 600;
+  cursor: pointer; transition: all 0.2s;
+}
+.cal-export-btn:hover { color: var(--text); border-color: var(--primary); }
 
 /* Month view */
 .cal-month-grid { display: flex; flex-direction: column; }

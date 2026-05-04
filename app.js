@@ -270,6 +270,29 @@ function deleteEvent() {
   closeEventSheet();
 }
 
+// ── Export to CSV ────────────────────────────────────────────────
+function exportToCSV() {
+  if (!events.length) { alert('Nenhum evento para exportar.'); return; }
+
+  const escape = v => `"${String(v).replace(/"/g, '""')}"`;
+  const header = ['Título', 'Data', 'Hora Início', 'Hora Fim'].map(escape).join(',');
+  const rows = events
+    .slice()
+    .sort((a, b) => (a.date + a.startTime).localeCompare(b.date + b.startTime))
+    .map(ev => [ev.title, ev.date, ev.startTime, ev.endTime].map(escape).join(','));
+
+  const csv = '﻿' + [header, ...rows].join('\r\n'); // BOM for Excel UTF-8
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  a.href     = url;
+  a.download = `ghestror-agenda-${toDateStr(new Date())}.csv`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
 // ── Calendar state ───────────────────────────────────────────────
 let calView   = 'month';
 let calCursor = new Date();
@@ -600,6 +623,9 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('sheet-overlay').addEventListener('click', e => {
     if (e.target === e.currentTarget) closeSheet();
   });
+
+  // Calendar export
+  document.getElementById('cal-export-btn').addEventListener('click', exportToCSV);
 
   // Event sheet
   document.getElementById('cal-add-btn').addEventListener('click', () => openEventSheet());
