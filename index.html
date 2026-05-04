@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#6366f1" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Ghestror" />
+  <title>Ghestror</title>
+  <link rel="manifest" href="manifest.json" />
+  <link rel="apple-touch-icon" href="icons/icon-192.png" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div id="app">
+    <!-- Header -->
+    <header class="header">
+      <div class="header-left">
+        <span class="logo">G</span>
+        <h1 class="header-title">Ghestror</h1>
+      </div>
+      <div class="header-right">
+        <button id="btn-notify" class="icon-btn" title="Ativar notificações">
+          <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+        </button>
+      </div>
+    </header>
+
+    <!-- Date bar -->
+    <div class="date-bar">
+      <span id="date-label"></span>
+      <span id="week-label"></span>
+    </div>
+
+    <!-- Tabs -->
+    <nav class="tabs">
+      <button class="tab active" data-tab="daily">Hoje</button>
+      <button class="tab" data-tab="weekly">Semana</button>
+    </nav>
+
+    <!-- Daily Panel -->
+    <section id="panel-daily" class="panel active">
+      <div class="panel-header">
+        <h2>Tarefas do Dia</h2>
+        <span id="daily-progress" class="progress-label"></span>
+      </div>
+      <div class="progress-bar-wrap">
+        <div id="daily-bar" class="progress-bar"></div>
+      </div>
+
+      <div class="add-form">
+        <input id="daily-input" type="text" placeholder="Nova tarefa para hoje..." maxlength="120" />
+        <button id="daily-add" class="add-btn">+</button>
+      </div>
+
+      <ul id="daily-list" class="task-list"></ul>
+
+      <div id="daily-empty" class="empty-state hidden">
+        <p>Nenhuma tarefa por hoje.<br/>Adicione uma acima!</p>
+      </div>
+    </section>
+
+    <!-- Weekly Panel -->
+    <section id="panel-weekly" class="panel hidden">
+      <div class="panel-header">
+        <h2>Metas da Semana</h2>
+        <span id="weekly-progress" class="progress-label"></span>
+      </div>
+      <div class="progress-bar-wrap">
+        <div id="weekly-bar" class="progress-bar"></div>
+      </div>
+
+      <div class="add-form">
+        <input id="weekly-input" type="text" placeholder="Nova meta semanal..." maxlength="120" />
+        <button id="weekly-add" class="add-btn">+</button>
+      </div>
+
+      <ul id="weekly-list" class="task-list"></ul>
+
+      <div id="weekly-empty" class="empty-state hidden">
+        <p>Nenhuma meta esta semana.<br/>Adicione uma acima!</p>
+      </div>
+    </section>
+  </div>
+
+  <!-- Confirm delete modal -->
+  <div id="modal-overlay" class="modal-overlay hidden">
+    <div class="modal">
+      <p>Remover esta tarefa?</p>
+      <div class="modal-actions">
+        <button id="modal-cancel" class="btn-secondary">Cancelar</button>
+        <button id="modal-confirm" class="btn-danger">Remover</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
