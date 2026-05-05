@@ -1,0 +1,55 @@
+/* ── Progress bar ───────────────────────────────────────────────── */
+.progress-bar-wrap {
+  height: 3px; background: var(--surface2);
+  border-radius: 99px; overflow: hidden; margin-bottom: 18px;
+}
+.progress-bar {
+  height: 100%; background: var(--primary);
+  border-radius: 99px; transition: width 0.4s ease; width: 0%;
+}
+
+/* ── Task list ──────────────────────────────────────────────────── */
+.task-list { list-style: none; display: flex; flex-direction: column; gap: 8px; padding-bottom: 24px; }
+.task-item {
+  display: flex; align-items: center; gap: 12px;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 14px;
+  animation: slideIn 0.2s ease; transition: border-color 0.2s, opacity 0.3s;
+}
+.task-item.done { border-color: var(--surface2); opacity: 0.45; }
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateY(-8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.check-btn {
+  width: 24px; height: 24px; border-radius: 50%;
+  border: 2px solid var(--border); background: transparent;
+  cursor: pointer; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center; transition: all 0.2s;
+}
+.check-btn:hover { border-color: var(--primary); }
+.check-btn.checked { background: var(--primary); border-color: var(--primary); }
+.check-btn.checked::after {
+  content: ''; display: block; width: 6px; height: 10px;
+  border: 2px solid #000; border-top: none; border-left: none;
+  transform: rotate(45deg) translate(-1px, -1px);
+}
+.task-text { flex: 1; font-size: 15px; line-height: 1.4; word-break: break-word; }
+.task-item.done .task-text { text-decoration: line-through; color: var(--text-muted); }
+.delete-btn {
+  background: transparent; border: none; color: var(--text-muted);
+  cursor: pointer; padding: 4px; border-radius: 6px;
+  display: flex; align-items: center; opacity: 0; transition: opacity 0.2s, color 0.2s;
+}
+.task-item:hover .delete-btn,
+.task-item:focus-within .delete-btn { opacity: 1; }
+.delete-btn:hover { color: var(--danger); }
+
+/* ── Empty state ────────────────────────────────────────────────── */
+.empty-state {
+  text-align: center; color: var(--text-muted);
+  padding: 48px 24px; font-size: 15px; line-height: 1.7;
+}
+.empty-state.hidden { display: none; }

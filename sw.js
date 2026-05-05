@@ -1,5 +1,14 @@
-const CACHE = 'ghestror-v1';
-const ASSETS = ['/', '/index.html', '/style.css', '/app.js', '/manifest.json'];
+const CACHE = 'ghestror-v2';
+const ASSETS = [
+  '/', '/index.html', '/manifest.json',
+  '/style.css',
+  '/css/base.css', '/css/layout.css', '/css/tasks.css',
+  '/css/calendar.css', '/css/sheets.css', '/css/modal.css',
+  '/js/main.js', '/js/store.js', '/js/utils.js',
+  '/js/tasks.js', '/js/notifications.js', '/js/export.js',
+  '/js/events.js', '/js/calendar.js',
+  '/icons/icon.svg',
+];
 
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS)));

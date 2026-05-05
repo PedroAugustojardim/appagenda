@@ -1,0 +1,61 @@
+/* ── Header ─────────────────────────────────────────────────────── */
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px 12px;
+  padding-top: calc(16px + env(safe-area-inset-top));
+  background: var(--bg);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+.header-left { display: flex; align-items: center; gap: 10px; }
+.logo {
+  width: 36px; height: 36px; border-radius: 10px;
+  flex-shrink: 0; display: block;
+  border: 1px solid var(--border);
+}
+.header-title { font-size: 20px; font-weight: 700; letter-spacing: -0.5px; }
+.icon-btn {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius-sm); color: var(--text-muted);
+  padding: 7px; cursor: pointer; display: flex; align-items: center;
+  transition: color 0.2s, background 0.2s;
+}
+.icon-btn:hover { color: var(--text); background: var(--surface2); }
+.icon-btn.active { color: var(--primary); border-color: var(--primary); }
+
+/* ── Date bar ───────────────────────────────────────────────────── */
+.date-bar {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 20px 14px; font-size: 13px; color: var(--text-muted);
+}
+
+/* ── Tabs ───────────────────────────────────────────────────────── */
+.tabs { display: flex; gap: 6px; padding: 0 20px 16px; }
+.tab {
+  flex: 1; padding: 10px 6px;
+  border-radius: var(--radius-sm); border: 1px solid var(--border);
+  background: transparent; color: var(--text-muted);
+  font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.2s;
+}
+.tab.active { background: var(--primary); border-color: var(--primary); color: #000; }
+
+/* ── Panel ──────────────────────────────────────────────────────── */
+.panel { display: flex; flex-direction: column; flex: 1; padding: 0 20px; }
+.panel.hidden { display: none; }
+.panel-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+.panel-header h2 { font-size: 17px; font-weight: 700; }
+.panel-header-right { display: flex; align-items: center; gap: 10px; }
+.progress-label { font-size: 12px; color: var(--text-muted); }
+
+.add-panel-btn {
+  width: 30px; height: 30px; border-radius: 50%;
+  background: var(--primary); border: none; color: #000;
+  font-size: 22px; font-weight: 400; line-height: 1;
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; transition: background 0.2s, transform 0.15s;
+}
+.add-panel-btn:hover { background: var(--primary-dim); }
+.add-panel-btn:active { transform: scale(0.9); }
