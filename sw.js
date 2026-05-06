@@ -1,4 +1,4 @@
-const CACHE = 'ghestror-v4';
+const CACHE = 'ghestror-v5';
 const ASSETS = [
   '/', '/index.html', '/login.html', '/manifest.json',
   '/style.css',
@@ -10,7 +10,7 @@ const ASSETS = [
   '/js/events.js', '/js/calendar.js',
   '/js/auth.js', '/js/firebase-config.js', '/js/login.js',
   '/js/profile.js',
-  '/icons/icon.svg',
+  '/icons/icon.svg', '/icons/icon-192.png', '/icons/icon-512.png',
 ];
 
 self.addEventListener('install', e => {
