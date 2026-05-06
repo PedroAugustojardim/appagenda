@@ -1,7 +1,7 @@
 import { loadTasks, renderDaily, renderWeekly, openSheet, closeSheet, confirmSheet, showModal, hideModal, confirmDelete } from './tasks.js';
 import { loadEvents, openEventSheet, closeEventSheet, saveEvent, deleteEvent, getEvents } from './events.js';
 import { renderCalendar, calPrev, calNext, calGoToday, setCalView } from './calendar.js';
-import { updateNotifBtn, toggleNotifications } from './notifications.js';
+import { updateNotifBtn, toggleNotifications, restoreNotifications } from './notifications.js';
 import { exportToCSV } from './export.js';
 import { formatDate, formatWeekRange } from './utils.js';
 import { initAuth, signOut } from './auth.js';
@@ -42,6 +42,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   renderDaily();
   renderWeekly();
   updateNotifBtn();
+  restoreNotifications();
 
   // Tabs
   document.querySelectorAll('.tab').forEach(btn =>

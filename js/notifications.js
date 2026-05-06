@@ -27,19 +27,12 @@ export function scheduleAt(hour, minute, fn) {
 
 export function updateNotifBtn() {
   const btn = document.getElementById('btn-notify');
+  if (!btn) return;
   btn.classList.toggle('active', notifEnabled);
   btn.title = notifEnabled ? 'Notificações ativas' : 'Ativar notificações';
 }
 
-export async function toggleNotifications() {
-  if (!('Notification' in window)) { alert('Seu navegador não suporta notificações.'); return; }
-  if (notifEnabled) {
-    notifEnabled = false; store.set('notif-enabled', false); updateNotifBtn(); return;
-  }
-  const perm = await Notification.requestPermission();
-  if (perm !== 'granted') { alert('Permissão negada. Ative nas configurações do navegador.'); return; }
-  notifEnabled = true; store.set('notif-enabled', true);
-  updateNotifBtn();
+function scheduleDailyReminders() {
   scheduleAt(8, 0, () => {
     const p = getDailyTasks().filter(t => !t.done).length;
     if (p > 0) new Notification('Bom dia! Ghestror', {
@@ -52,5 +45,24 @@ export async function toggleNotifications() {
       body: `Ainda há ${p} tarefa${p > 1 ? 's' : ''} pendente${p > 1 ? 's' : ''} hoje.`, icon: '/icons/icon.svg'
     });
   });
+}
+
+// Call on every app load to restore timers lost when the page was closed.
+export function restoreNotifications() {
+  if (notifEnabled && Notification.permission === 'granted') {
+    scheduleDailyReminders();
+  }
+}
+
+export async function toggleNotifications() {
+  if (!('Notification' in window)) { alert('Seu navegador não suporta notificações.'); return; }
+  if (notifEnabled) {
+    notifEnabled = false; store.set('notif-enabled', false); updateNotifBtn(); return;
+  }
+  const perm = await Notification.requestPermission();
+  if (perm !== 'granted') { alert('Permissão negada. Ative nas configurações do navegador.'); return; }
+  notifEnabled = true; store.set('notif-enabled', true);
+  updateNotifBtn();
+  scheduleDailyReminders();
   new Notification('Ghestror ativado!', { body: 'Receberá lembretes das suas tarefas.', icon: '/icons/icon.svg' });
 }
