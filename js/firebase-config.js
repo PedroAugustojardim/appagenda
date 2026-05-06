@@ -1,10 +1,9 @@
-// Preencha com as credenciais do seu projecto Firebase:
 // Firebase Console → Project Settings → Your apps → SDK setup and configuration
 export const firebaseConfig = {
-  apiKey:            'YOUR_API_KEY',
-  authDomain:        'YOUR_PROJECT.firebaseapp.com',
-  projectId:         'YOUR_PROJECT_ID',
-  storageBucket:     'YOUR_PROJECT.appspot.com',
-  messagingSenderId: 'YOUR_SENDER_ID',
-  appId:             'YOUR_APP_ID',
+  apiKey:            'AIzaSyDZ_cE4Jm0B0peOqjf5ibQpGbccPynMmSg',
+  authDomain:        'ghestror.firebaseapp.com',
+  projectId:         'ghestror',
+  storageBucket:     'ghestror.firebasestorage.app',
+  messagingSenderId: '168700199008',
+  appId:             '1:168700199008:web:722812f0b9edb9ca264305',
 };
