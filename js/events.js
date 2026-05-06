@@ -71,7 +71,11 @@ export function saveEvent() {
 
   if (editingEventId) {
     const idx = events.findIndex(e => e.id === editingEventId);
-    if (idx !== -1) events[idx] = { id: editingEventId, title, date, startTime: start, endTime: end };
+    if (idx !== -1) {
+      const ev = { id: editingEventId, title, date, startTime: start, endTime: end };
+      events[idx] = ev;
+      scheduleEventNotif(ev);
+    }
   } else {
     const ev = { id: Date.now(), title, date, startTime: start, endTime: end };
     events.push(ev);

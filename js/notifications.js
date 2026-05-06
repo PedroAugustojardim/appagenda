@@ -2,6 +2,7 @@ import { store } from './store.js';
 import { getDailyTasks } from './tasks.js';
 
 export let notifEnabled = store.get('notif-enabled') || false;
+let _dailyScheduled = false;
 
 export function scheduleEventNotif(ev) {
   if (Notification.permission !== 'granted') return;
@@ -33,6 +34,8 @@ export function updateNotifBtn() {
 }
 
 function scheduleDailyReminders() {
+  if (_dailyScheduled) return;
+  _dailyScheduled = true;
   scheduleAt(8, 0, () => {
     const p = getDailyTasks().filter(t => !t.done).length;
     if (p > 0) new Notification('Bom dia! Ghestror', {
@@ -57,7 +60,11 @@ export function restoreNotifications() {
 export async function toggleNotifications() {
   if (!('Notification' in window)) { alert('Seu navegador não suporta notificações.'); return; }
   if (notifEnabled) {
-    notifEnabled = false; store.set('notif-enabled', false); updateNotifBtn(); return;
+    notifEnabled = false;
+    _dailyScheduled = false;
+    store.set('notif-enabled', false);
+    updateNotifBtn();
+    return;
   }
   const perm = await Notification.requestPermission();
   if (perm !== 'granted') { alert('Permissão negada. Ative nas configurações do navegador.'); return; }

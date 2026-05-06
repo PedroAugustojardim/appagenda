@@ -93,7 +93,7 @@ body {
   transition: background 0.15s;
 }
 
-.auth-btn-google:hover { background: var(--surface3, #2a2a2a); }
+.auth-btn-google:hover { background: var(--surface3); }
 
 /* Divider */
 .auth-divider {
