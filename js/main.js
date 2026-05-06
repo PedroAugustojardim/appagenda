@@ -95,6 +95,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     updateProfileNotif();
   });
 
+  // Profile header button
+  document.getElementById('btn-profile').addEventListener('click', () => switchTab('profile'));
+
   // Notifications (header quick-toggle)
   document.getElementById('btn-notify').addEventListener('click', toggleNotifications);
 
