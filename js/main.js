@@ -99,10 +99,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   // Profile header button
   document.getElementById('btn-profile').addEventListener('click', () => switchTab('profile'));
 
-  // Notifications (header quick-toggle)
-  document.getElementById('btn-notify').addEventListener('click', toggleNotifications);
-
-  // Delete modal
+// Delete modal
   document.getElementById('modal-cancel').addEventListener('click', hideModal);
   document.getElementById('modal-confirm').addEventListener('click', confirmDelete);
   document.getElementById('modal-overlay').addEventListener('click', e => {
