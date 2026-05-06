@@ -8,7 +8,7 @@ import { initAuth, signOut } from './auth.js';
 import { renderProfile, updateProfileNotif, handleSignOut, handleDeleteAccount, handleLinkGoogle, handleExportEvents } from './profile.js';
 
 function registerSW() {
-  if ('serviceWorker' in navigator) navigator.serviceWorker.register('/sw.js').catch(() => {});
+  if ('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js').catch(() => {});
 }
 
 let currentTab = 'daily';
