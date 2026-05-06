@@ -4,6 +4,7 @@ import { renderCalendar, calPrev, calNext, calGoToday, setCalView } from './cale
 import { updateNotifBtn, toggleNotifications } from './notifications.js';
 import { exportToCSV } from './export.js';
 import { formatDate, formatWeekRange } from './utils.js';
+import { initAuth, signOut } from './auth.js';
 
 function registerSW() {
   if ('serviceWorker' in navigator) navigator.serviceWorker.register('/sw.js').catch(() => {});
@@ -22,7 +23,10 @@ function switchTab(name) {
   if (name === 'agenda') renderCalendar();
 }
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
+  const user = await initAuth();
+  if (!user) { window.location.href = 'login.html'; return; }
+
   loadTasks();
   loadEvents();
   registerSW();
@@ -78,6 +82,12 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('cal-today').addEventListener('click', calGoToday);
   document.querySelectorAll('.cal-view-btn').forEach(btn =>
     btn.addEventListener('click', () => setCalView(btn.dataset.view)));
+
+  // Logout
+  document.getElementById('btn-logout').addEventListener('click', async () => {
+    await signOut();
+    window.location.href = 'login.html';
+  });
 
   // Notifications
   document.getElementById('btn-notify').addEventListener('click', toggleNotifications);

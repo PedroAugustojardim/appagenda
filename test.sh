@@ -347,29 +347,156 @@ report() {
   return "$FAIL"
 }
 
-# ── dispatch ──────────────────────────────────────────────────────────
+phase8() {
+  echo ""
+  echo "╔══════════════════════════════════════╗"
+  echo "║  FASE 8 — auth.js + firebase-config  ║"
+  echo "╚══════════════════════════════════════╝"
+
+  echo ""
+  echo "▸ Ficheiros existem?"
+  check_exists "js/auth.js"
+  check_exists "js/firebase-config.js"
+
+  echo ""
+  echo "▸ Sintaxe válida?"
+  check_syntax "js/auth.js"
+  check_syntax "js/firebase-config.js"
+
+  echo ""
+  echo "▸ auth.js exporta funções obrigatórias?"
+  for fn in initAuth signInGoogle signInEmail signUpEmail signInAnon signOut; do
+    grep -q "export.*function $fn\|export.*$fn\b" js/auth.js \
+      && ok "exporta: $fn" || fail "falta export: $fn"
+  done
+
+  echo ""
+  echo "▸ firebase-config.js exporta firebaseConfig?"
+  grep -q "export.*firebaseConfig" js/firebase-config.js \
+    && ok "firebaseConfig exportado" || fail "firebaseConfig não exportado"
+}
+
+phase9() {
+  echo ""
+  echo "╔══════════════════════════════════════╗"
+  echo "║  FASE 9 — login.html + auth.css      ║"
+  echo "╚══════════════════════════════════════╝"
+
+  echo ""
+  echo "▸ Ficheiros existem?"
+  check_exists "login.html"
+  check_exists "css/auth.css"
+  check_exists "js/login.js"
+
+  echo ""
+  echo "▸ Sintaxe JS válida?"
+  check_syntax "js/login.js"
+
+  echo ""
+  echo "▸ login.html tem elementos obrigatórios?"
+  grep -q 'id="btn-google"'    login.html && ok "botão Google presente"    || fail "botão Google ausente"
+  grep -q 'id="auth-email"'    login.html && ok "input email presente"     || fail "input email ausente"
+  grep -q 'id="auth-password"' login.html && ok "input password presente"  || fail "input password ausente"
+  grep -q 'id="btn-anon"'      login.html && ok "botão anon presente"      || fail "botão anon ausente"
+  grep -q 'id="auth-error"'    login.html && ok "elemento erro presente"   || fail "elemento erro ausente"
+  grep -q 'type="module"'      login.html && ok "login.html usa module"    || fail "login.html não usa module"
+
+  echo ""
+  echo "▸ login.html importa css/auth.css?"
+  grep -q 'css/auth.css' login.html && ok "auth.css importado" || fail "auth.css não importado"
+
+  echo ""
+  echo "▸ Servidor HTTP responde com 200?"
+  start_server
+  check_http_200 "http://localhost:18099/login.html"
+  check_http_200 "http://localhost:18099/css/auth.css"
+  check_http_200 "http://localhost:18099/js/login.js"
+  check_http_200 "http://localhost:18099/js/auth.js"
+  stop_server
+}
+
+phase10() {
+  echo ""
+  echo "╔══════════════════════════════════════╗"
+  echo "║  FASE 10 — guard main.js + logout    ║"
+  echo "╚══════════════════════════════════════╝"
+
+  echo ""
+  echo "▸ main.js importa auth.js?"
+  grep -q "from './auth.js'" js/main.js \
+    && ok "auth.js importado em main.js" || fail "auth.js não importado em main.js"
+
+  echo ""
+  echo "▸ main.js tem guard de autenticação?"
+  grep -q "initAuth\|location.*login" js/main.js \
+    && ok "guard de auth presente" || fail "guard de auth ausente"
+
+  echo ""
+  echo "▸ main.js tem DOMContentLoaded async?"
+  grep -q "async.*DOMContentLoaded\|DOMContentLoaded.*async" js/main.js \
+    && ok "DOMContentLoaded é async" || fail "DOMContentLoaded não é async (necessário para await)"
+
+  echo ""
+  echo "▸ index.html tem botão de logout?"
+  grep -q 'id="btn-logout"' index.html \
+    && ok "botão logout presente" || fail "botão logout ausente"
+}
+
+phase11() {
+  echo ""
+  echo "╔══════════════════════════════════════╗"
+  echo "║  FASE 11 — sw.js v3 + novos assets   ║"
+  echo "╚══════════════════════════════════════╝"
+
+  echo ""
+  echo "▸ Versão da cache incrementada para v3?"
+  grep -q "ghestror-v3" sw.js \
+    && ok "cache versão v3 encontrada" || fail "cache ainda não é v3"
+
+  echo ""
+  echo "▸ ASSETS inclui novos ficheiros?"
+  check_assets_includes "login.html"
+  check_assets_includes "css/auth.css"
+  check_assets_includes "js/auth.js"
+  check_assets_includes "js/firebase-config.js"
+  check_assets_includes "js/login.js"
+
+  echo ""
+  echo "▸ Todos os ficheiros no ASSETS existem em disco?"
+  check_sw_assets
+}
+
+
 
 PHASE=${1:-""}
 
 case "$PHASE" in
-  1) phase1; report;;
-  2) phase2; report;;
-  3) phase3; report;;
-  4) phase4; report;;
-  5) phase5; report;;
-  6) phase6; report;;
-  7) phase7; report;;
+  1)  phase1;  report;;
+  2)  phase2;  report;;
+  3)  phase3;  report;;
+  4)  phase4;  report;;
+  5)  phase5;  report;;
+  6)  phase6;  report;;
+  7)  phase7;  report;;
+  8)  phase8;  report;;
+  9)  phase9;  report;;
+  10) phase10; report;;
+  11) phase11; report;;
   *)
     echo ""
     echo "Uso: ./test.sh <fase>"
     echo ""
-    echo "  Fase 1 — Divisão do CSS"
-    echo "  Fase 2 — store.js + utils.js"
-    echo "  Fase 3 — tasks.js + notifications.js + export.js"
-    echo "  Fase 4 — events.js"
-    echo "  Fase 5 — calendar.js"
-    echo "  Fase 6 — main.js + index.html"
-    echo "  Fase 7 — sw.js (ASSETS + versão cache)"
+    echo "  Fase 1  — Divisão do CSS"
+    echo "  Fase 2  — store.js + utils.js"
+    echo "  Fase 3  — tasks.js + notifications.js + export.js"
+    echo "  Fase 4  — events.js"
+    echo "  Fase 5  — calendar.js"
+    echo "  Fase 6  — main.js + index.html"
+    echo "  Fase 7  — sw.js (ASSETS + versão cache)"
+    echo "  Fase 8  — auth.js + firebase-config.js"
+    echo "  Fase 9  — login.html + css/auth.css + js/login.js"
+    echo "  Fase 10 — guard main.js + botão logout"
+    echo "  Fase 11 — sw.js v3 + novos assets"
     echo ""
     exit 1
     ;;
