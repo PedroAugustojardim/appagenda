@@ -17,7 +17,12 @@ export function renderProfile() {
   if (user) {
     const initial = (user.displayName?.[0] || user.email?.[0] || '?').toUpperCase();
     if (user.photoURL) {
-      avatarEl.innerHTML = `<img src="${user.photoURL}" alt="avatar" class="profile-avatar-img">`;
+      const img = document.createElement('img');
+      img.src = user.photoURL;
+      img.alt = 'avatar';
+      img.className = 'profile-avatar-img';
+      avatarEl.innerHTML = '';
+      avatarEl.appendChild(img);
     } else {
       avatarEl.textContent = initial;
     }

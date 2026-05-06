@@ -25,7 +25,6 @@ export function initAuth() {
   return new Promise(resolve => {
     const timer = setTimeout(() => resolve(null), 3000);
     getFirebase().then(auth => {
-      const { onAuthStateChanged } = window.__fbAuth || {};
       import('https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js').then(({ onAuthStateChanged }) => {
         const unsub = onAuthStateChanged(auth, user => {
           clearTimeout(timer);
