@@ -1,14 +1,15 @@
-const CACHE = 'ghestror-v3';
+const CACHE = 'ghestror-v4';
 const ASSETS = [
   '/', '/index.html', '/login.html', '/manifest.json',
   '/style.css',
   '/css/base.css', '/css/layout.css', '/css/tasks.css',
   '/css/calendar.css', '/css/sheets.css', '/css/modal.css',
-  '/css/auth.css',
+  '/css/auth.css', '/css/profile.css',
   '/js/main.js', '/js/store.js', '/js/utils.js',
   '/js/tasks.js', '/js/notifications.js', '/js/export.js',
   '/js/events.js', '/js/calendar.js',
   '/js/auth.js', '/js/firebase-config.js', '/js/login.js',
+  '/js/profile.js',
   '/icons/icon.svg',
 ];
 

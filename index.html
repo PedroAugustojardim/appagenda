@@ -24,9 +24,6 @@
         <button id="btn-notify" class="icon-btn" title="Ativar notificações">
           <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
         </button>
-        <button id="btn-logout" class="icon-btn" title="Sair">
-          <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
-        </button>
       </div>
     </header>
 
@@ -39,6 +36,7 @@
       <button class="tab active" data-tab="daily">Hoje</button>
       <button class="tab" data-tab="weekly">Semana</button>
       <button class="tab" data-tab="agenda">Agenda</button>
+      <button class="tab" data-tab="profile">Perfil</button>
     </nav>
 
     <!-- Daily Panel -->
@@ -97,6 +95,98 @@
           Excel
         </button>
         <button id="cal-add-btn" class="add-panel-btn" aria-label="Novo evento">+</button>
+      </div>
+    </section>
+  </div>
+
+    <!-- Profile Panel -->
+    <section id="panel-profile" class="panel hidden">
+      <div class="profile-panel">
+
+        <div class="profile-user-card">
+          <div id="profile-avatar" class="profile-avatar">?</div>
+          <div class="profile-info">
+            <p id="profile-name" class="profile-name">Utilizador</p>
+            <p id="profile-email" class="profile-email hidden"></p>
+            <span id="profile-badge" class="profile-badge profile-badge-anon">● Conta temporária</span>
+          </div>
+        </div>
+
+        <div class="profile-stats">
+          <div class="profile-stat-card">
+            <span id="stat-daily" class="profile-stat-value">0/0</span>
+            <span class="profile-stat-label">Hoje</span>
+          </div>
+          <div class="profile-stat-card">
+            <span id="stat-weekly" class="profile-stat-value">0/0</span>
+            <span class="profile-stat-label">Semana</span>
+          </div>
+          <div class="profile-stat-card">
+            <span id="stat-events" class="profile-stat-value">0</span>
+            <span class="profile-stat-label">Eventos</span>
+          </div>
+        </div>
+
+        <div>
+          <p class="profile-section-title">Definições</p>
+          <div class="profile-rows">
+            <div class="profile-row" id="profile-notif-row">
+              <div class="profile-row-left">
+                <span class="profile-row-icon">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+                </span>
+                <span>Notificações</span>
+              </div>
+              <button id="profile-notif-btn" class="profile-notif-toggle">Inativo</button>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <p class="profile-section-title">Dados</p>
+          <div class="profile-rows">
+            <button class="profile-row" id="profile-export-btn">
+              <div class="profile-row-left">
+                <span class="profile-row-icon">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                </span>
+                <span>Exportar eventos</span>
+              </div>
+              <span class="profile-row-value">CSV</span>
+            </button>
+          </div>
+        </div>
+
+        <div>
+          <p class="profile-section-title">Conta</p>
+          <div class="profile-rows">
+            <button class="profile-row" id="profile-signout-btn">
+              <div class="profile-row-left">
+                <span class="profile-row-icon">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+                </span>
+                <span>Sair</span>
+              </div>
+            </button>
+            <button class="profile-row profile-row-danger hidden" id="profile-delete-btn">
+              <div class="profile-row-left">
+                <span class="profile-row-icon">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+                </span>
+                <span>Eliminar conta</span>
+              </div>
+            </button>
+          </div>
+        </div>
+
+        <div id="profile-anon-banner" class="profile-anon-banner hidden">
+          <p>Guarde os seus dados na nuvem associando uma conta Google.</p>
+          <button class="profile-anon-banner-btn" id="profile-link-google-btn">
+            <svg width="16" height="16" viewBox="0 0 18 18" xmlns="http://www.w3.org/2000/svg"><path d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.875 2.684-6.615z" fill="#4285F4"/><path d="M9 18c2.43 0 4.467-.806 5.956-2.18l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 0 0 9 18z" fill="#34A853"/><path d="M3.964 10.71A5.41 5.41 0 0 1 3.682 9c0-.593.102-1.17.282-1.71V4.958H.957A8.996 8.996 0 0 0 0 9c0 1.452.348 2.827.957 4.042l3.007-2.332z" fill="#FBBC05"/><path d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 0 0 .957 4.958L3.964 7.29C4.672 5.163 6.656 3.58 9 3.58z" fill="#EA4335"/></svg>
+            Associar conta Google
+          </button>
+        </div>
+
       </div>
     </section>
   </div>

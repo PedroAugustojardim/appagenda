@@ -5,6 +5,7 @@ import { updateNotifBtn, toggleNotifications } from './notifications.js';
 import { exportToCSV } from './export.js';
 import { formatDate, formatWeekRange } from './utils.js';
 import { initAuth, signOut } from './auth.js';
+import { renderProfile, updateProfileNotif, handleSignOut, handleDeleteAccount, handleLinkGoogle, handleExportEvents } from './profile.js';
 
 function registerSW() {
   if ('serviceWorker' in navigator) navigator.serviceWorker.register('/sw.js').catch(() => {});
@@ -15,12 +16,13 @@ function switchTab(name) {
   currentTab = name;
   document.querySelectorAll('.tab').forEach(t =>
     t.classList.toggle('active', t.dataset.tab === name));
-  ['daily', 'weekly', 'agenda'].forEach(p => {
+  ['daily', 'weekly', 'agenda', 'profile'].forEach(p => {
     const el = document.getElementById(`panel-${p}`);
     el.classList.toggle('active', p === name);
     el.classList.toggle('hidden', p !== name);
   });
   if (name === 'agenda') renderCalendar();
+  if (name === 'profile') renderProfile();
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -83,13 +85,17 @@ document.addEventListener('DOMContentLoaded', async () => {
   document.querySelectorAll('.cal-view-btn').forEach(btn =>
     btn.addEventListener('click', () => setCalView(btn.dataset.view)));
 
-  // Logout
-  document.getElementById('btn-logout').addEventListener('click', async () => {
-    await signOut();
-    window.location.href = 'login.html';
+  // Profile panel
+  document.getElementById('profile-signout-btn').addEventListener('click', handleSignOut);
+  document.getElementById('profile-delete-btn').addEventListener('click', handleDeleteAccount);
+  document.getElementById('profile-link-google-btn').addEventListener('click', handleLinkGoogle);
+  document.getElementById('profile-export-btn').addEventListener('click', handleExportEvents);
+  document.getElementById('profile-notif-row').addEventListener('click', async () => {
+    await toggleNotifications();
+    updateProfileNotif();
   });
 
-  // Notifications
+  // Notifications (header quick-toggle)
   document.getElementById('btn-notify').addEventListener('click', toggleNotifications);
 
   // Delete modal

@@ -294,9 +294,9 @@ phase7() {
   echo "╚══════════════════════════════════════╝"
 
   echo ""
-  echo "▸ Versão da cache incrementada para v2?"
-  grep -q "ghestror-v2" sw.js \
-    && ok "cache versão v2 encontrada" \
+  echo "▸ Versão da cache incrementada (v2+)?"
+  grep -qE "ghestror-v[2-9]" sw.js \
+    && ok "cache versão v2+ encontrada" \
     || fail "cache ainda é v1 — utilizadores não receberão novos ficheiros"
 
   echo ""
@@ -449,9 +449,9 @@ phase11() {
   echo "╚══════════════════════════════════════╝"
 
   echo ""
-  echo "▸ Versão da cache incrementada para v3?"
-  grep -q "ghestror-v3" sw.js \
-    && ok "cache versão v3 encontrada" || fail "cache ainda não é v3"
+  echo "▸ Versão da cache incrementada para v3+?"
+  grep -qE "ghestror-v[3-9]" sw.js \
+    && ok "cache versão v3+ encontrada" || fail "cache ainda não é v3+"
 
   echo ""
   echo "▸ ASSETS inclui novos ficheiros?"
