@@ -1,4 +1,4 @@
-import { initAuth, signInGoogle, signInEmail, signUpEmail, signInAnon } from './auth.js';
+import { initAuth, signInGoogle, signInEmail, signUpEmail, signInAnon, CONFIGURED } from './auth.js';
 
 const loadingEl  = document.getElementById('auth-loading');
 const cardEl     = document.getElementById('auth-card');
@@ -34,6 +34,12 @@ initAuth().then(user => {
   loadingEl.classList.add('hidden');
   if (user) { goToApp(); return; }
   cardEl.classList.remove('hidden');
+
+  if (!CONFIGURED) {
+    showError('Firebase não configurado. Preencha js/firebase-config.js com as credenciais do seu projeto Firebase para ativar o login.');
+    document.getElementById('btn-google').disabled = true;
+    submitBtn.disabled = true;
+  }
 });
 
 document.getElementById('btn-google').addEventListener('click', async () => {
@@ -85,6 +91,10 @@ document.getElementById('btn-anon').addEventListener('click', async () => {
 
 function friendlyError(e) {
   const code = e?.code || '';
+  if (code === 'not-configured')
+    return 'Firebase não configurado. Preencha js/firebase-config.js com as credenciais do seu projeto Firebase.';
+  if (code.includes('unauthorized-domain'))
+    return 'Domínio não autorizado. Adicione-o em Firebase Console → Authentication → Settings → Authorized domains.';
   if (code.includes('user-not-found') || code.includes('wrong-password') || code.includes('invalid-credential'))
     return 'E-mail ou palavra-passe incorretos.';
   if (code.includes('email-already-in-use'))
@@ -95,6 +105,8 @@ function friendlyError(e) {
     return 'E-mail inválido.';
   if (code.includes('popup-closed') || code.includes('cancelled-popup-request'))
     return 'Início de sessão cancelado.';
+  if (code.includes('popup-blocked'))
+    return 'Popup bloqueado pelo navegador. Permita popups para este site.';
   if (code.includes('network-request-failed'))
     return 'Sem ligação à internet.';
   return 'Ocorreu um erro. Tente novamente.';

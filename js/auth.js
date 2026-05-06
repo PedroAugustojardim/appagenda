@@ -15,10 +15,13 @@ async function getFirebase() {
   return _auth;
 }
 
+export { CONFIGURED };
+
 // Resolves with the current user (or null) after at most 3 s.
-// Falls back to null on any error so the app never hangs offline.
+// When Firebase is not configured, resolves with a local anonymous user
+// so the app remains accessible without credentials.
 export function initAuth() {
-  if (!CONFIGURED) return Promise.resolve(null);
+  if (!CONFIGURED) return Promise.resolve({ uid: 'local', isAnonymous: true });
   return new Promise(resolve => {
     const timer = setTimeout(() => resolve(null), 3000);
     getFirebase().then(auth => {
@@ -37,18 +40,21 @@ export function initAuth() {
 export function getUser() { return _auth ? _auth.currentUser : null; }
 
 export async function signInGoogle() {
+  if (!CONFIGURED) throw Object.assign(new Error(), { code: 'not-configured' });
   const auth = await getFirebase();
   const { signInWithPopup } = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js');
   return signInWithPopup(auth, _GoogleProvider);
 }
 
 export async function signInEmail(email, password) {
+  if (!CONFIGURED) throw Object.assign(new Error(), { code: 'not-configured' });
   const auth = await getFirebase();
   const { signInWithEmailAndPassword } = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js');
   return signInWithEmailAndPassword(auth, email, password);
 }
 
 export async function signUpEmail(email, password) {
+  if (!CONFIGURED) throw Object.assign(new Error(), { code: 'not-configured' });
   const auth = await getFirebase();
   const { createUserWithEmailAndPassword } = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js');
   return createUserWithEmailAndPassword(auth, email, password);
