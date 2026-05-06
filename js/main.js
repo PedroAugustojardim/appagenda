@@ -7,6 +7,17 @@ import { formatDate, formatWeekRange } from './utils.js';
 import { initAuth, signOut } from './auth.js';
 import { renderProfile, updateProfileNotif, handleSignOut, handleDeleteAccount, handleLinkGoogle, handleExportEvents } from './profile.js';
 
+let deferredInstallPrompt = null;
+window.addEventListener('beforeinstallprompt', e => {
+  e.preventDefault();
+  deferredInstallPrompt = e;
+  document.getElementById('profile-install-btn')?.classList.remove('hidden');
+});
+window.addEventListener('appinstalled', () => {
+  deferredInstallPrompt = null;
+  document.getElementById('profile-install-btn')?.classList.add('hidden');
+});
+
 function registerSW() {
   if ('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js').catch(() => {});
 }
@@ -94,6 +105,15 @@ document.addEventListener('DOMContentLoaded', async () => {
   document.getElementById('profile-notif-row').addEventListener('click', async () => {
     await toggleNotifications();
     updateProfileNotif();
+  });
+
+  // Install
+  document.getElementById('profile-install-btn').addEventListener('click', async () => {
+    if (!deferredInstallPrompt) return;
+    deferredInstallPrompt.prompt();
+    await deferredInstallPrompt.userChoice;
+    deferredInstallPrompt = null;
+    document.getElementById('profile-install-btn').classList.add('hidden');
   });
 
   // Profile header button
